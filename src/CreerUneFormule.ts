@@ -1,6 +1,6 @@
-import EventStore from "./EventStore"
-import { UneFormuleAEtéCréée } from "../test/formule.test"
-import Formule from "./Formule"
+import EventStore from './EventStore'
+import { UneFormuleAEtéCréée } from '../test/formule.test'
+import Formule from './Formule'
 
 export default class CréerUneFormule {
   constructor(public eventStore: EventStore) {}

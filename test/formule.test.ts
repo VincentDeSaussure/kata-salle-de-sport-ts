@@ -2,9 +2,9 @@ import Formule from '../src/Formule'
 import EventStore, { Event } from '../src/EventStore'
 import CréerUneFormule from '../src/CreerUneFormule'
 
-const moment = () => {
+export const moment = () => {
   const date = new Date()
-  return (date.getMonth() + 1) + '/' + date.getDate()
+  return date.getMonth() + 1 + '/' + date.getDate()
 }
 
 export class UneFormuleAEtéCréée implements Event {

@@ -1,30 +1,46 @@
-import Formule from "./../src/Formule"
+import Formule, { FormuleCommand } from './../src/Formule'
+import EventStore, { Event } from './../src/EventStore'
+import { moment } from './formule.test'
+import Abonnement from '../src/Abonnement'
+import { SouscrireAUnAbonnement } from './../src/SouscrireAUnAbonnement'
 
-class Abonnement {
-  private formule: Formule
-  
+export enum PERIODICITE {
+  MOIS,
+  ANNEE,
+}
 
-  constructor(formule: Formule) {
-    this.formule = formule
-  }
+export class UnAbonnementAEtéCréé implements Event {
+  name = 'Un abonnement a été créé'
+  date = moment()
+  data: Abonnement
 
-  static creer(formule: Formule, estEtudiant?: boolean): Abonnement {
-    return new Abonnement(formule)
+  constructor(data) {
+    this.data = data
   }
 }
 
-describe('créer un abonnement', () => {
+describe('souscrire à un abonnement', () => {
+  let abonnementStore
+  beforeEach(()=> abonnementStore = new EventStore())
   describe('avec une formule', () => {
-    it('un abonnement est créer', () => {
-      const formule = new Formule('Gold', 35)
-      const abonnement = new Abonnement(formule)
-      expect(Abonnement.creer(formule)).toEqual(abonnement)
+    describe('au mois', () => {
+      it('publie l‘évènement : un abonnement a été créer', () => {
+        const formuleCommande: FormuleCommand = { nom: 'Gold', prixDeBase: 35 }
+        const souscrireAUnAbonnement = new SouscrireAUnAbonnement(abonnementStore)
+        souscrireAUnAbonnement.execute(formuleCommande, PERIODICITE.MOIS)
+        const abonnement = Abonnement.creer(Formule.creer(formuleCommande.nom, formuleCommande.prixDeBase), PERIODICITE.MOIS)
+        const unAbonnementAEtéCréer = new UnAbonnementAEtéCréé(abonnement)
+        expect(abonnementStore.list[0]).toEqual(unAbonnementAEtéCréer)
+      })
     })
-    describe('quand le prospect est étudiant', () => {
-      it('une réduction de 20% est appliquée', () => {
-        const formule = new Formule('Gold', 35)
-        const abonnement = new Abonnement(formule)
-        expect(Abonnement.creer(formule)).toEqual(abonnement)
+    describe(`à l'année`, () => {
+      it(`publie l'évènement un abonnement a été créé, avec une réduction de 20%`, () => {
+        const formuleCommande: FormuleCommand = { nom: 'Gold', prixDeBase: 35 }
+        const souscrireAUnAbonnement = new SouscrireAUnAbonnement(abonnementStore)
+        souscrireAUnAbonnement.execute(formuleCommande, PERIODICITE.ANNEE)
+        const abonnement = Abonnement.creer(Formule.creer(formuleCommande.nom, formuleCommande.prixDeBase), PERIODICITE.ANNEE)
+        const unAbonnementAEtéCréer = new UnAbonnementAEtéCréé(abonnement)
+        expect(abonnementStore.list[0]).toEqual(unAbonnementAEtéCréer)
       })
     })
   })
