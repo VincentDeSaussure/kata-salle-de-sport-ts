@@ -14,3 +14,8 @@ Je peux changer le prix d’une formule
 Un abonnement se renouvelle automatiquement
 
 Au bout de 3 ans d’abonnement, l’abonné reçoit un email de remerciement
+
+
+# Participants
+
+Romain (@romaincalamier)
